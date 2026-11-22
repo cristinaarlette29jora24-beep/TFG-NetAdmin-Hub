@@ -1,0 +1,31 @@
+services:
+  web:
+    build: .
+    container_name: netadmin-web
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  api:
+    build: ./server
+    container_name: netadmin-api
+    environment:
+      PORT: 3001
+      FRONTEND_URL: http://localhost
+    expose:
+      - "3001"
+    restart: unless-stopped
+
+  kuma:
+    image: louislam/uptime-kuma:1
+    container_name: netadmin-kuma
+    ports:
+      - "3002:3001"
+    volumes:
+      - kuma-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  kuma-data:
